@@ -45,7 +45,6 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
                 localStorage.setItem('@RocketShoes', JSON.stringify(cart))
             })
-            console.log(cart)
         } catch {
             throw new Error('this is an error belive me')
         }
@@ -53,9 +52,17 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
     const removeProduct = (productId: number) => {
         try {
-            // TODO
+            const findProductIndex = cart.findIndex(
+                (product) => product.id === productId
+            )
+
+            const cartArr = cart.splice(1, findProductIndex)
+
+            setCart(cartArr)
+
+            localStorage.setItem('@RocketShoes', JSON.stringify(cart))
         } catch {
-            // TODO
+            throw new Error('this is an error belive me')
         }
     }
 
