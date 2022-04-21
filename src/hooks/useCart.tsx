@@ -29,7 +29,7 @@ const CartContext = createContext<CartContextData>({} as CartContextData)
 
 export function CartProvider({ children }: CartProviderProps): JSX.Element {
     const [cart, setCart] = useState<Product[]>(() => {
-        const storagedCart = localStorage.getItem('@RocketShoes')
+        const storagedCart = localStorage.getItem('@RocketShoes:cart')
 
         if (storagedCart) {
             return JSON.parse(storagedCart)
@@ -40,13 +40,28 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
     const addProduct = async (productId: number) => {
         try {
-            await api.get(`products/${productId}`).then((response) => {
-                const addToCart = { ...response.data, amount: 1 }
+            const findProductIndex = cart.findIndex(
+                (product) => product.id === productId
+            )
 
-                setCart([...cart, addToCart])
+            if (findProductIndex === -1) {
+                await api.get(`products/${productId}`).then((response) => {
+                    const addToCart = { ...response.data, amount: 1 }
 
-                localStorage.setItem('@RocketShoes', JSON.stringify(cart))
-            })
+                    setCart([...cart, addToCart])
+
+                    localStorage.setItem(
+                        '@RocketShoes:cart',
+                        JSON.stringify(cart)
+                    )
+                })
+            } else {
+                cart[findProductIndex].amount += 1
+
+                setCart([...cart])
+
+                localStorage.setItem('@RocketShoes:cart', JSON.stringify(cart))
+            }
         } catch {
             throw new Error('this is an error belive me')
         }
@@ -62,7 +77,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
             setCart([...cart])
 
-            localStorage.setItem('@RocketShoes', JSON.stringify(cart))
+            localStorage.setItem('@RocketShoes:cart', JSON.stringify(cart))
         } catch {
             throw new Error('this is an error belive me')
         }
