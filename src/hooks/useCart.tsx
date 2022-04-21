@@ -41,7 +41,9 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     const addProduct = async (productId: number) => {
         try {
             await api.get(`products/${productId}`).then((response) => {
-                setCart([...cart, response.data])
+                const addToCart = { ...response.data, amount: 1 }
+
+                setCart([...cart, addToCart])
 
                 localStorage.setItem('@RocketShoes', JSON.stringify(cart))
             })
@@ -56,9 +58,9 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
                 (product) => product.id === productId
             )
 
-            const cartArr = cart.splice(1, findProductIndex)
+            cart.splice(findProductIndex, 1)
 
-            setCart(cartArr)
+            setCart([...cart])
 
             localStorage.setItem('@RocketShoes', JSON.stringify(cart))
         } catch {
@@ -71,8 +73,18 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
         amount,
     }: UpdateProductAmount) => {
         try {
-            // TODO
+            const findProductIndex = cart.findIndex(
+                (product) => product.id === productId
+            )
+
+            const cartArr = cart
+
+            cartArr[findProductIndex].amount = amount
+
+            setCart([...cartArr])
         } catch {
+            throw new Error('this is an error belive me')
+
             // TODO
         }
     }
