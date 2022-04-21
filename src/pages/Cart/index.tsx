@@ -32,9 +32,15 @@ const Cart = (): JSX.Element => {
     //   )
 
     function handleProductIncrement(product: Product) {
-        product.amount += 1
-        updateProductAmount({ productId: product.id, amount: product.amount })
-        // TODO
+        if (product.amount > 1) {
+            product.amount += 1
+            updateProductAmount({
+                productId: product.id,
+                amount: product.amount,
+            })
+        } else {
+            return
+        }
     }
 
     function handleProductDecrement(product: Product) {
@@ -44,32 +50,30 @@ const Cart = (): JSX.Element => {
                 productId: product.id,
                 amount: product.amount,
             })
+        } else {
+            return
         }
-        return
-        // TODO
     }
 
     function handleRemoveProduct(productId: number) {
         removeProduct(productId)
-
-        // TODO
     }
 
     return (
         <Container>
-            {cart.map((product) => {
-                return (
-                    <ProductTable>
-                        <thead>
-                            <tr>
-                                <th aria-label="product image" />
-                                <th>PRODUTO</th>
-                                <th>QTD</th>
-                                <th>SUBTOTAL</th>
-                                <th aria-label="delete icon" />
-                            </tr>
-                        </thead>
-                        <tbody>
+            <ProductTable>
+                <thead>
+                    <tr>
+                        <th aria-label="product image" />
+                        <th>PRODUTO</th>
+                        <th>QTD</th>
+                        <th>SUBTOTAL</th>
+                        <th aria-label="delete icon" />
+                    </tr>
+                </thead>
+                <tbody>
+                    {cart.map((product) => {
+                        return (
                             <tr data-testid="product">
                                 <td>
                                     <img
@@ -127,11 +131,10 @@ const Cart = (): JSX.Element => {
                                     </button>
                                 </td>
                             </tr>
-                        </tbody>
-                    </ProductTable>
-                )
-            })}
-
+                        )
+                    })}
+                </tbody>
+            </ProductTable>
             <footer>
                 <button type="button">Finalizar pedido</button>
 

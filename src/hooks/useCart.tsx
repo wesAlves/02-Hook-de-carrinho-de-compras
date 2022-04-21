@@ -63,7 +63,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
                 localStorage.setItem('@RocketShoes:cart', JSON.stringify(cart))
             }
         } catch {
-            throw new Error('this is an error belive me')
+            toast.error('Erro na remoção do produto')
         }
     }
 
@@ -79,7 +79,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
             localStorage.setItem('@RocketShoes:cart', JSON.stringify(cart))
         } catch {
-            throw new Error('this is an error belive me')
+            toast.error('Erro na remoção do produto')
         }
     }
 
@@ -98,8 +98,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
             setCart([...cartArr])
         } catch {
-            throw new Error('this is an error belive me')
-
+            toast.error('Erro na remoção do produto')
             // TODO
         }
     }
