@@ -1,13 +1,12 @@
-import React, { useState } from 'react'
 import {
     MdDelete,
     MdAddCircleOutline,
     MdRemoveCircleOutline,
 } from 'react-icons/md'
 import { useCart } from '../../hooks/useCart'
+import { api } from '../../services/api'
 
-// import { useCart } from '../../hooks/useCart';
-// import { formatPrice } from '../../util/format';
+import { formatPrice } from '../../util/format'
 import { Container, ProductTable, Total } from './styles'
 
 interface Product {
@@ -31,12 +30,19 @@ const Cart = (): JSX.Element => {
     //     }, 0)
     //   )
 
-    function handleProductIncrement(product: Product) {
-        product.amount += 1
+    async function handleProductIncrement(product: Product) {
+        // await api.get(`stock/${product.id}`).then((response) => {
+        //     const productInStock = response.data
+
+        //     if (productInStock.amount > product.amount) {
         updateProductAmount({
+            amount: (product.amount += 1),
             productId: product.id,
-            amount: product.amount,
         })
+        // } else {
+        //     return
+        // }
+        // })
     }
 
     function handleProductDecrement(product: Product) {

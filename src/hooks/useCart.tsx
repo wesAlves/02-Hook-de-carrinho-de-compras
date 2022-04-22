@@ -80,12 +80,12 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     }
 
     const removeProduct = (productId: number) => {
-        try {
-            const findProductIndex = cart.findIndex(
-                (product) => product.id === productId
-            )
+        const findProductIndex = cart.findIndex(
+            (product) => product.id === productId
+        )
 
-            if (findProductIndex >= 0) {
+        try {
+            if (findProductIndex !== -1) {
                 cart.splice(findProductIndex, 1)
 
                 setCart(() => {
@@ -107,25 +107,39 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
         amount,
     }: UpdateProductAmount) => {
         try {
-            const findProductIndex = cart.findIndex(
-                (product) => product.id === productId
-            )
+            await api.get(`stock/${productId}`).then((response) => {
+                const productInStock = response.data
 
-            const cartArr = cart
+                const findProductIndex = cart.findIndex(
+                    (product) => product.id === productId
+                )
+                try {
+                    if (productInStock.amount > 0) {
+                        if (
+                            productInStock.amount >
+                            cart[findProductIndex].amount
+                        ) {
+                            const cartArr = cart
 
-            if (cartArr[findProductIndex].amount > 1) {
-                cartArr[findProductIndex].amount = amount
+                            if (cartArr[findProductIndex].amount > 1) {
+                                cartArr[findProductIndex].amount = amount
 
-                setCart(() => {
-                    localStorage.setItem(
-                        '@RocketShoes:cart',
-                        JSON.stringify(cartArr)
-                    )
-                    return cartArr
-                })
-            }
+                                setCart(() => {
+                                    localStorage.setItem(
+                                        '@RocketShoes:cart',
+                                        JSON.stringify(cartArr)
+                                    )
+                                    return cartArr
+                                })
+                            }
+                        }
+                    }
+                } catch {
+                    toast.error('Quantidade solicitada fora de estoque')
+                }
+            })
         } catch {
-            toast.error('Erro na remoção do produto')
+            toast.error('Erro')
             // TODO
         }
     }
