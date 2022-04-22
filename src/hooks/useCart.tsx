@@ -44,12 +44,12 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
                 (product) => product.id === productId
             )
 
-            if (findProductIndex === -1) {
-                await api.get(`products/${productId}`).then((response) => {
-                    const addToCart = { ...response.data, amount: 1 }
+            await api.get(`products/${productId}`).then((response) => {
+                const addToCart = { ...response.data, amount: 1 }
 
-                    const newCart = [...cart, addToCart]
+                const newCart = [...cart, addToCart]
 
+                if (findProductIndex === -1) {
                     setCart(() => {
                         localStorage.setItem(
                             '@RocketShoes:cart',
@@ -57,14 +57,17 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
                         )
                         return newCart
                     })
-                })
-            } else {
-                cart[findProductIndex].amount += 1
+                } else {
+                    cart[findProductIndex].amount += 1
 
-                setCart([...cart])
+                    setCart([...cart])
 
-                localStorage.setItem('@RocketShoes:cart', JSON.stringify(cart))
-            }
+                    localStorage.setItem(
+                        '@RocketShoes:cart',
+                        JSON.stringify(cart)
+                    )
+                }
+            })
             const local = localStorage.getItem('@Rocketshoes:cart')
 
             if (local !== null) {
@@ -72,7 +75,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
                 console.log(JSON.parse(local))
             }
         } catch {
-            toast.error('Erro na remoção do produto')
+            toast.error('Erro na adição do produto')
         }
     }
 
