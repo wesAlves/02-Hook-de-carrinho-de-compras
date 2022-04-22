@@ -32,15 +32,11 @@ const Cart = (): JSX.Element => {
     //   )
 
     function handleProductIncrement(product: Product) {
-        if (product.amount > 1) {
-            product.amount += 1
-            updateProductAmount({
-                productId: product.id,
-                amount: product.amount,
-            })
-        } else {
-            return
-        }
+        product.amount += 1
+        updateProductAmount({
+            productId: product.id,
+            amount: product.amount,
+        })
     }
 
     function handleProductDecrement(product: Product) {
@@ -74,7 +70,7 @@ const Cart = (): JSX.Element => {
                 <tbody>
                     {cart.map((product) => {
                         return (
-                            <tr data-testid="product">
+                            <tr data-testid="product" key={product.id}>
                                 <td>
                                     <img
                                         src={product.image}

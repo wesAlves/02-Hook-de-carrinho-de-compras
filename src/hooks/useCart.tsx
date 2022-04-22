@@ -48,12 +48,15 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
                 await api.get(`products/${productId}`).then((response) => {
                     const addToCart = { ...response.data, amount: 1 }
 
-                    setCart([...cart, addToCart])
+                    const newCart = [...cart, addToCart]
 
-                    localStorage.setItem(
-                        '@RocketShoes:cart',
-                        JSON.stringify(cart)
-                    )
+                    setCart(() => {
+                        localStorage.setItem(
+                            '@RocketShoes:cart',
+                            JSON.stringify(newCart)
+                        )
+                        return newCart
+                    })
                 })
             } else {
                 cart[findProductIndex].amount += 1
@@ -61,6 +64,12 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
                 setCart([...cart])
 
                 localStorage.setItem('@RocketShoes:cart', JSON.stringify(cart))
+            }
+            const local = localStorage.getItem('@Rocketshoes:cart')
+
+            if (local !== null) {
+                console.log(cart)
+                console.log(JSON.parse(local))
             }
         } catch {
             toast.error('Erro na remoção do produto')
@@ -73,11 +82,18 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
                 (product) => product.id === productId
             )
 
-            cart.splice(findProductIndex, 1)
+            if (findProductIndex >= 0) {
+                cart.splice(findProductIndex, 1)
 
-            setCart([...cart])
+                setCart(() => {
+                    localStorage.setItem(
+                        '@RocketShoes:cart',
+                        JSON.stringify(cart)
+                    )
 
-            localStorage.setItem('@RocketShoes:cart', JSON.stringify(cart))
+                    return cart
+                })
+            }
         } catch {
             toast.error('Erro na remoção do produto')
         }
@@ -94,9 +110,17 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
             const cartArr = cart
 
-            cartArr[findProductIndex].amount = amount
+            if (cartArr[findProductIndex].amount > 1) {
+                cartArr[findProductIndex].amount = amount
 
-            setCart([...cartArr])
+                setCart(() => {
+                    localStorage.setItem(
+                        '@RocketShoes:cart',
+                        JSON.stringify(cartArr)
+                    )
+                    return cartArr
+                })
+            }
         } catch {
             toast.error('Erro na remoção do produto')
             // TODO
